@@ -10,9 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ImgLogo from "../../assets/logo.png";
 import {
   faArrowRightFromBracket,
-  faArrowRightToBracket,
   faGear,
-  faUserPlus,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -20,10 +18,11 @@ const CustomSidebar = ({ visible, onHide }) => {
   const navigate = useNavigate();
 
   const handleLinkClick = () => {
-    onHide(); // Close the sidebar
+    onHide();
   };
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("userID");
+    localStorage.removeItem("fullName");
     navigate("/login");
   };
   return (
@@ -53,26 +52,11 @@ const CustomSidebar = ({ visible, onHide }) => {
               Settings
             </Link>
           </li>
-          <li>
-            <Link
-              to={ROUTES.SIGNUP}
-              className="sidebar-link "
-              onClick={handleLinkClick}
-            >
-              <FontAwesomeIcon icon={faUserPlus} className="mr-2" /> Signup
-            </Link>
-          </li>
-          <li>
-            <Link
-              to={ROUTES.LOGIN}
-              className="sidebar-link "
-              onClick={handleLinkClick}
-            >
-              <FontAwesomeIcon icon={faArrowRightToBracket} className="mr-2" />
-              Login
-            </Link>
-          </li>
-          <li className=" py-2 px-4 rext-black" onClick={() => handleLogout()}>
+
+          <li
+            className=" py-2 px-4 rext-black cursor-pointer"
+            onClick={() => handleLogout()}
+          >
             <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2" />
             Logout
           </li>

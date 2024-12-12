@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./styles/CustomInput.css"; // Import the CSS file for styling
-
+import React from "react";
 import {
   Home,
   Layout,

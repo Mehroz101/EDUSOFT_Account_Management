@@ -18,6 +18,11 @@ export default function Navbar({ onShow }) {
             aria-label="Show Sidebar"
           />
         }
+        end={
+          <h3 className=" pr-2 text-lg font-bold text-purple-900">
+            EduAccountant
+          </h3>
+        }
       />
     </>
   );

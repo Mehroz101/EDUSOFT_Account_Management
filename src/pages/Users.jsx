@@ -8,187 +8,259 @@ import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Dialog } from "primereact/dialog";
+import CustomTextInput from "../components/FormComponents/CustomTextInput";
+import { useForm } from "react-hook-form";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { GetAllUsers, UsersInsertUpdate } from "../Services/UserApi";
+import CCheckBox from "../components/FormComponents/CCheckBox";
+import { notify } from "../utils/Notification";
 
 export default function Users() {
-  const [customers, setCustomers] = useState([]);
+  const [userPopup, setUserPopup] = useState(false);
+  const [mode, setMode] = useState("create"); // "create" or "edit"
+  const [selectedUser, setSelectedUser] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    fullname: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    email: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    username: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
+    FullName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    Email: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    UserName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   });
-  const [loading, setLoading] = useState(true);
+  const LoginUserID = localStorage.getItem("userID");
+  const method = useForm({
+    defaultValues: {
+      userID: LoginUserID,
+      UserName: "",
+      FullName: "",
+      Email: "",
+      Password: "",
+      InActive: false,
+    },
+  });
 
-  const [statuses] = useState(["active", "Inactive"]);
-
-  const getSeverity = (status) => {
-    switch (status) {
-      case "active":
-        return "success";
-      case "Inactive":
-        return "warning";
-      default:
-        return null;
+  //=========================== UseQuery Function===============================
+  const {
+    data: usersData,
+    isLoading: isLoadingUsers,
+    refetch: refetchUsers,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => GetAllUsers(),
+  });
+  //===========================UseMutation Function===============================
+  const AddUser = useMutation({
+    mutationFn: UsersInsertUpdate,
+    onSuccess: (data) => {
+      if (data.success) {
+        console.log("success");
+        notify("success", "User added successfully");
+        refetchUsers();
+        setUserPopup(false);
+      } else {
+        console.log("error occure");
+        notify("error", data.message);
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+  //===========================handleFormSubmit Function===============================
+  const handleFormSubmit = (data) => {
+    console.log(data);
+    const sendData = {
+      userID: data.UserID,
+      fullName: data.FullName,
+      email: data.Email,
+      userName: data.UserName,
+      password: data.Password,
+      inActive: data.InActive ? 1 : 0,
+    };
+    AddUser.mutate(sendData);
+  };
+  const openEditPopup = (user) => {
+    setMode("edit");
+    setSelectedUser(user);
+    method.setValue("UserID", user.UserID);
+    if (user) {
+      method.reset(user); // Pre-fill form with selected user data
     }
-  };
-
-  useEffect(() => {
-    const users = [
-      {
-        fullname: "John Doe",
-        email: "johndoe@example.com",
-        password: "securePassword123",
-        username: "johndoe",
-        status: "active",
-      },
-      {
-        fullname: "Jane Smith",
-        email: "janesmith@example.com",
-        password: "strongPassword456",
-        username: "janesmith",
-        status: "Inactive",
-      },
-      {
-        fullname: "Alice Johnson",
-        email: "alicejohnson@example.com",
-        password: "alicePassword789",
-        username: "alicejohnson",
-        status: "active",
-      },
-    ];
-    setCustomers(users);
-    setLoading(false);
-  }, []);
-
-  const statusBodyTemplate = (rowData) => {
-    return (
-      <Tag value={rowData.status} severity={getSeverity(rowData.status)} />
-    );
-  };
-
-  const statusItemTemplate = (option) => {
-    return <Tag value={option} severity={getSeverity(option)} />;
-  };
-
-  const statusRowFilterTemplate = (options) => {
-    return (
-      <Dropdown
-        value={options.value}
-        options={statuses}
-        onChange={(e) => options.filterApplyCallback(e.value)}
-        itemTemplate={statusItemTemplate}
-        placeholder="Select One"
-        className="p-column-filter"
-        showClear
-        style={{ minWidth: "12rem" }}
-      />
-    );
+    setUserPopup(true);
   };
 
   const rowIndexTemplate = (rowData, options) => {
     return options.rowIndex + 1;
   };
-
+  //===========================actionTemplate Function===============================
   const actionTemplate = (rowData) => {
     return (
       <div className="flex gap-2">
         <Button
           icon={<FontAwesomeIcon icon={faPencil} />}
           className="p-button-outlined p-button-info"
+          onClick={() => openEditPopup(rowData)}
         />
-        <Button
+        {/* <Button
           icon={<FontAwesomeIcon icon={faEye} />}
           className="p-button-outlined p-button-success"
-        />
-        <Button
+        /> */}
+        {/* <Button
           icon={<FontAwesomeIcon icon={faTrash} />}
           className="p-button-outlined p-button-danger"
-        />
+        /> */}
       </div>
     );
   };
-
+  //===========================checkboxTemplate Function===============================
   const checkboxTemplate = (rowData) => {
-    const isChecked = rowData.status === "active";
-    const toggleStatus = () => {
-      const updatedCustomers = customers.map((customer) =>
-        customer.username === rowData.username
-          ? { ...customer, status: isChecked ? "Inactive" : "active" }
-          : customer
-      );
-      setCustomers(updatedCustomers);
-    };
-    return <Checkbox checked={isChecked} onChange={toggleStatus} />;
+    const toggleStatus = () => {};
+    return <Checkbox checked={rowData.InActive} onChange={toggleStatus} />;
   };
-
+  //===========================render Function===============================
   return (
-    <div className="table">
-      <DataTable
-        value={customers}
-        paginator
-        stripedRows
-        rows={10}
-        dataKey="username" // Use a unique key for each row
-        filters={filters}
-        filterDisplay="row"
-        loading={loading}
-        emptyMessage="No customers found."
-      >
-        <Column
-          header="#"
-          body={rowIndexTemplate}
+    <>
+      <div className="userpage_top flex justify-content-between align-items-center">
+        <h1>Users</h1>
+        <Button
+          label="Add User"
           style={{
-            width: "5rem",
-            backgroundColor: "--table-header-background",
+            maxWidth: "200px",
+            backgroundColor: "#640D5F",
+            outline: "none",
+            border: "none",
+          }}
+          onClick={() => {
+            method.reset({
+              FullName: "",
+              UserName: "",
+              Email: "",
+              Password: "",
+              InActive: false,
+            }); // Reset all fields to empty values
+            setUserPopup(true);
+            setMode("create");
           }}
         />
-        <Column
-          header="Actions"
-          body={actionTemplate}
-          style={{ width: "10rem" }}
-        />
-        <Column
-          field="fullname"
-          header="Full Name"
-          filter
-          filterPlaceholder="Search by Full Name"
-          style={{ minWidth: "12rem" }}
-        />
+      </div>
+      <div className="table">
+        <DataTable
+          value={usersData}
+          paginator
+          stripedRows
+          rows={10}
+          dataKey="username" // Use a unique key for each row
+          filters={filters}
+          filterDisplay="row"
+          emptyMessage="No users found."
+        >
+          <Column
+            header="#"
+            body={rowIndexTemplate}
+            style={{
+              width: "5rem",
+              backgroundColor: "--table-header-background",
+            }}
+          />
+          <Column
+            header="Actions"
+            body={actionTemplate}
+            style={{ width: "10rem" }}
+          />
+          <Column
+            field="FullName"
+            header="Full Name"
+            filter
+            filterPlaceholder="Search by Full Name"
+            style={{ minWidth: "12rem" }}
+          />
 
-        <Column
-          field="email"
-          header="Email"
-          filter
-          filterPlaceholder="Search by Email"
-          style={{ minWidth: "12rem" }}
-        />
+          <Column
+            field="Email"
+            header="Email"
+            filter
+            filterPlaceholder="Search by Email"
+            style={{ minWidth: "12rem" }}
+          />
 
-        <Column
-          field="username"
-          header="Username"
-          filter
-          filterPlaceholder="Search by Username"
-          style={{ minWidth: "12rem" }}
-        />
+          <Column
+            field="UserName"
+            header="Username"
+            filter
+            filterPlaceholder="Search by Username"
+            style={{ minWidth: "12rem" }}
+          />
+          <Column
+            field="Password"
+            header="Password"
+            style={{ minWidth: "12rem" }}
+          />
+          <Column
+            field="InActive"
+            header="Active"
+            body={checkboxTemplate}
+            style={{ width: "6rem" }}
+          />
+        </DataTable>
+      </div>
 
-        <Column
-          field="status"
-          header="Status"
-          showFilterMenu={false}
-          filterMenuStyle={{ width: "14rem" }}
-          style={{ minWidth: "12rem" }}
-          body={statusBodyTemplate}
-          filter
-          filterElement={statusRowFilterTemplate}
-        />
+      <Dialog
+        header={mode === "create" ? "Add User" : "Edit User"}
+        visible={userPopup}
+        style={{ width: "50vw" }}
+        onHide={() => {
+          setUserPopup(false);
+          method.reset({
+            FullName: "",
+            UserName: "",
+            Email: "",
+            Password: "",
+            InActive: false,
+          });
+          setSelectedUser(null);
+        }}
+      >
+        <form
+          onSubmit={method.handleSubmit(handleFormSubmit)}
+          className="flex flex-column gap-3"
+        >
+          <CustomTextInput
+            name="FullName"
+            label="Full Name"
+            control={method.control}
+            rules={{ required: "Full Name is required" }}
+          />
+          <CustomTextInput
+            name="UserName"
+            label="Username"
+            control={method.control}
+            rules={{ required: "Username is required" }}
+          />
+          <CustomTextInput
+            name="Email"
+            label="Email"
+            control={method.control}
+            rules={{ required: "Email is required" }}
+          />
 
-        <Column
-          header="Active"
-          body={checkboxTemplate}
-          style={{ width: "6rem" }}
-        />
-      </DataTable>
-    </div>
+          <CustomTextInput
+            name="Password"
+            label="Password"
+            type="password"
+            control={method.control}
+            rules={{ required: "Password is required" }}
+          />
+          <CCheckBox name="InActive" label="Active" control={method.control} />
+          <Button
+            label={mode === "create" ? "Create" : "Update"}
+            style={{
+              maxWidth: "200px",
+              backgroundColor: "#640D5F",
+              outline: "none",
+              border: "none",
+            }}
+          />
+        </form>
+      </Dialog>
+    </>
   );
 }

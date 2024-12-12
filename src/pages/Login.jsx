@@ -2,10 +2,38 @@ import React from "react";
 import "../styles/Auth.css";
 import CustomTextInput from "../components/FormComponents/CustomTextInput";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { LoginUser } from "../Services/AuthApi";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../utils/routes";
+import { notify } from "../utils/Notification";
 
 const Login = () => {
-  const method = useForm();
-  const onsubmit = (data) => console.log(data);
+  const method = useForm({
+    defaultValues: {
+      userName: "",
+      password: "",
+    },
+  });
+  const navigate = useNavigate();
+  //===========================UseMutation Function===============================
+  const Login = useMutation({
+    mutationFn: LoginUser,
+    onSuccess: (data) => {
+      console.log(data);
+      if (data.success) {
+        localStorage.setItem("userID", JSON.stringify(data.data[0].UserID));
+        localStorage.setItem("fullName", JSON.stringify(data.data[0].FullName));
+        navigate(ROUTES.HOME);
+        notify("success", "Login successfully");
+      } else {
+        notify("error", data.message);
+      }
+    },
+  });
+  const onsubmit = (data) => {
+    Login.mutate(data);
+  };
   return (
     <div>
       <div class="container">
@@ -15,8 +43,8 @@ const Login = () => {
               <div class="auth__field">
                 <i class="auth__icon fas fa-user"></i>
                 <CustomTextInput
-                  name="email"
-                  label="Email"
+                  name="userName"
+                  label="UserName"
                   placeHolder="Enter your email"
                   control={method.control}
                   rules={{ required: "Email is required" }}
