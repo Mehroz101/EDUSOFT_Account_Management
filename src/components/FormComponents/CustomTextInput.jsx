@@ -1,6 +1,5 @@
 import React from "react";
 import { Controller } from "react-hook-form";
-import "../../styles/CustomTextInput.css"; // Import the CSS file for styling
 import { InputText } from "primereact/inputtext";
 const CustomTextInput = ({
   control,
@@ -18,7 +17,7 @@ const CustomTextInput = ({
   ...props
 }) => {
   return (
-    <div className="custom-text-input-container">
+    <div className="custom-input-container">
       <Controller
         name={name}
         control={control}

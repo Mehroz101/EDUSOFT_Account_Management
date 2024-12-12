@@ -6,6 +6,15 @@ import { Link } from "react-router-dom";
 import "../../styles/CustomSidebar.css"; // Optional CSS for custom styles
 import { ROUTES } from "../../utils/routes";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ImgLogo from "../../assets/logo.png";
+import {
+  faArrowRightFromBracket,
+  faArrowRightToBracket,
+  faGear,
+  faUserPlus,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 
 const CustomSidebar = ({ visible, onHide }) => {
   const navigate = useNavigate();
@@ -26,20 +35,11 @@ const CustomSidebar = ({ visible, onHide }) => {
         <ul className="sidebar-links">
           <li>
             <Link
-              to={ROUTES.HOME}
-              className="sidebar-link"
-              onClick={handleLinkClick}
-            >
-              <i className="pi pi-home"></i> Dashboard
-            </Link>
-          </li>
-          <li>
-            <Link
               to={ROUTES.USERS}
               className="sidebar-link"
               onClick={handleLinkClick}
             >
-              <i className="pi pi-users"></i> Users
+              <FontAwesomeIcon icon={faUsers} className="mr-2" /> Users
             </Link>
           </li>
 
@@ -49,29 +49,42 @@ const CustomSidebar = ({ visible, onHide }) => {
               className="sidebar-link "
               onClick={handleLinkClick}
             >
-              <i className="pi pi-cog"></i>
+              <FontAwesomeIcon icon={faGear} className="mr-2" />
               Settings
             </Link>
           </li>
+          <li>
+            <Link
+              to={ROUTES.SIGNUP}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faUserPlus} className="mr-2" /> Signup
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={ROUTES.LOGIN}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faArrowRightToBracket} className="mr-2" />
+              Login
+            </Link>
+          </li>
           <li className=" py-2 px-4 rext-black" onClick={() => handleLogout()}>
-            <i className="pi pi-sign-out pr-2"></i>
+            <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2" />
             Logout
           </li>
         </ul>
       </div>
 
-      <div className=" absolute bottom-0">
-        <hr className="mb-3 mx-3 border-top-1 border-none surface-border" />
-        <a
-          v-ripple
-          className="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
-        >
-          <Avatar
-            image="https://avatars.githubusercontent.com/u/85057779?v=4"
-            shape="circle"
-          />
-          <span className="font-bold">Mehroz Farooq</span>
-        </a>
+      <div className=" absolute bottom-0 w-80">
+        <img
+          src={ImgLogo}
+          alt=""
+          style={{ width: "100%", height: "200px", objectFit: "contain" }}
+        />
       </div>
     </Sidebar>
   );

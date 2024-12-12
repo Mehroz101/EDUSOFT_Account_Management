@@ -1,3 +1,20 @@
+:root{
+    --primary-color: #640D5F;
+    --primary-color-hover: #640D5F;
+    --primary-color-focus: #640D5F;
+    --primary-color-active: #640D5F;
+    --primary-color-disabled: #640D5F;
+    --primary-color-text: #ffffff;
+
+    --table-header-background: #640D5F;
+    --table-header-color: #ffffff;
+    
+}
+
 .p-menubar-button{
     display: none !important;
+}
+.table table thead tr:nth-child(1) th{
+    background-color: var(--table-header-background) !important;
+    color: var(--table-header-color) !important;
 }
