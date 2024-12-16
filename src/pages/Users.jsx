@@ -17,6 +17,8 @@ import CCheckBox from "../components/FormComponents/CCheckBox";
 import { notify } from "../utils/Notification";
 
 export default function Users() {
+  document.title = "Users";
+
   const [userPopup, setUserPopup] = useState(false);
   const [mode, setMode] = useState("create"); // "create" or "edit"
   const [selectedUser, setSelectedUser] = useState(null);
@@ -119,7 +121,7 @@ export default function Users() {
   //===========================render Function===============================
   return (
     <>
-      <div className="userpage_top flex justify-content-between align-items-center">
+      <div className="page_top flex justify-content-between align-items-center">
         <h1>Users</h1>
         <Button
           label="Add User"
@@ -158,7 +160,6 @@ export default function Users() {
             body={rowIndexTemplate}
             style={{
               width: "5rem",
-              backgroundColor: "--table-header-background",
             }}
           />
           <Column

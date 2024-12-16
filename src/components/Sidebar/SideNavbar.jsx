@@ -10,7 +10,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ImgLogo from "../../assets/logo.png";
 import {
   faArrowRightFromBracket,
+  faBuilding,
   faGear,
+  faReceipt,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -41,7 +43,27 @@ const CustomSidebar = ({ visible, onHide }) => {
               <FontAwesomeIcon icon={faUsers} className="mr-2" /> Users
             </Link>
           </li>
+          <li>
+            <Link
+              to={ROUTES.BUSINESSUNIT.PAGE}
+              className="sidebar-link"
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faBuilding} className="mr-2" /> Business
+              Unit
+            </Link>
+          </li>
 
+          <li>
+            <Link
+              to={ROUTES.CUSTOMERINVOICE.PAGE}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faReceipt} className="mr-2" /> Customer
+              Invoice
+            </Link>
+          </li>
           <li>
             <Link
               to={ROUTES.SETTING}
@@ -52,7 +74,6 @@ const CustomSidebar = ({ visible, onHide }) => {
               Settings
             </Link>
           </li>
-
           <li
             className=" py-2 px-4 rext-black cursor-pointer"
             onClick={() => handleLogout()}

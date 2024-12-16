@@ -9,6 +9,7 @@ import { ROUTES } from "../utils/routes";
 import { notify } from "../utils/Notification";
 
 const Login = () => {
+  document.title = "Login";
   const method = useForm({
     defaultValues: {
       userName: "",

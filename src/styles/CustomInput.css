@@ -1,13 +1,13 @@
 /* Container for the custom text input */
 .custom-input-container {
-    margin-bottom: 1rem;
+    margin-bottom: 0.2rem;
     width: 100%;
   }
   
   /* Styling for the label */
   .custom-label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.2rem;
     font-size: 1rem;
     font-weight: 600;
     color: #333;
@@ -19,7 +19,7 @@
   /* Styling for the input field */
   .custom-input {
     width: 100%;
-    padding: 0.8rem;
+    padding: 0.3rem;
     font-size: 1rem;
     outline: none;
     border: 1px solid #ccc;

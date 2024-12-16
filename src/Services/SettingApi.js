@@ -30,39 +30,3 @@ export const ConfigurationInsertUpdate = async (data) => {
     return [];
   }
 };
-// URL: http://192.168.9.2:81
-// Controller: Configuration
-// API: GetConfiguration
-// Sample: /api/Configuration/GetConfiguration
-// Body Params:
-// No Parameter
-// Return Value:
-// {
-//   "message": "",
-//   "success": true,
-//   "dt": [
-//     {
-//       "ConfigID": 1,
-//       "FinancialSessionDateFrom": "2024-01-01T00:00:00",
-//       "FinancialSessionDateTo": "2024-12-01T00:00:00",
-//       "SalesTaxPercentage": 5
-//     }
-//   ]
-// }
-
-// URL: http://192.168.9.2:81
-// Controller: Configuration
-// API: ConfigurationInsertUpdate
-// Sample: /api/Configuration/ConfigurationInsertUpdate
-// Body Params:
-// {
-//   "configID": 0,
-//   "financialSessionDateFrom": "string",
-//   "financialSessionDateTo": "string",
-//   "salesTaxPercentage": 0
-// }
-// Return Value:
-// {
-//   "message": "Invalid config ID. Please contact administrator",
-//   "success": false
-// }

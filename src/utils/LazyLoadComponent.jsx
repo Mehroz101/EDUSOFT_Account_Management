@@ -7,3 +7,11 @@ export const Setting = lazy(() => import("../pages/Setting"));
 export const Home = lazy(() => import("../pages/Home"));
 export const ProtectedRoute = lazy(() => import("../context/ProtectedRoutes"));
 export const Layout = lazy(() => import("../layout/Layout"));
+export const BusinessUnit = lazy(() => import("../pages/BusinessUnit"));
+export const BusinessUnitInsertAndUpdate = lazy(() =>
+  import("../pages/BusinessUnit/BusinessUnitInsertAndUpdate")
+);
+export const CustomerInvoice = lazy(() => import("../pages/CustomerInvoice"));
+export const CustomerInvoiceInsertAndUpdate = lazy(() =>
+  import("../pages/CustomerInvoice/CustomerInvoiceInsertAndUpdate")
+);

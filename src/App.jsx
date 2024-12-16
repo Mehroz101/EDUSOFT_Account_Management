@@ -3,9 +3,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./styles/CustomInput.css"; // Import the CSS file for styling
 import React from "react";
 import {
+  BusinessUnit,
+  BusinessUnitInsertAndUpdate,
+  CustomerInvoice,
   Home,
   Layout,
   Login,
+  CustomerInvoiceInsertAndUpdate,
   ProtectedRoute,
   Setting,
   Signup,
@@ -21,7 +25,6 @@ function Fallback({ error }) {
 
   if (match) {
     const filePath = match[1];
-    console.log("File path:", filePath); // Output: http://localhost:5173/src/App.jsx?t=1732289155098
 
     // If you want just the file name
     var fileName = filePath.substring(
@@ -29,10 +32,7 @@ function Fallback({ error }) {
       filePath.indexOf("?")
     );
     // Output: App.jsx
-  } else {
-    console.log("No file path found in the error message.");
   }
-  console.log(error.file);
 
   return (
     <div
@@ -70,9 +70,31 @@ function AppRoutes() {
     <Routes>
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path={ROUTES.SIGNUP} element={<Signup />} />
+      {/* ==========================Protected Route========================== */}
       <Route path="/" element={<ProtectedRoute element={<Layout />} />}>
         <Route index element={<Home />} />
         <Route path={ROUTES.USERS} element={<Users />} />
+        <Route path={ROUTES.BUSINESSUNIT.PAGE} element={<BusinessUnit />} />
+        <Route
+          path={ROUTES.BUSINESSUNIT.INSERTORUPDATE}
+          element={<BusinessUnitInsertAndUpdate />}
+        />
+        <Route
+          path={`${ROUTES.BUSINESSUNIT.INSERTORUPDATE}/:id/:mode`}
+          element={<BusinessUnitInsertAndUpdate />}
+        />
+        <Route
+          path={ROUTES.CUSTOMERINVOICE.PAGE}
+          element={<CustomerInvoice />}
+        />
+        <Route
+          path={`${ROUTES.CUSTOMERINVOICE.INSERTORUPDATE}`}
+          element={<CustomerInvoiceInsertAndUpdate />}
+        />
+        <Route
+          path={`${ROUTES.CUSTOMERINVOICE.INSERTORUPDATE}/:id/:mode`}
+          element={<CustomerInvoiceInsertAndUpdate />}
+        />
         <Route path={ROUTES.SETTING} element={<Setting />} />
       </Route>
     </Routes>

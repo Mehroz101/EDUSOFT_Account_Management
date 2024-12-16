@@ -13,6 +13,7 @@ import { formatDateToISO } from "../utils/functions";
 import { notify } from "../utils/Notification";
 
 const Setting = () => {
+  document.title = "Setting";
   const method = useForm({
     defaultValues: {
       configID: 1,
@@ -86,15 +87,9 @@ const Setting = () => {
           </FormColumn>
           <FormColumn md="6" lg="3" xl="3">
             <CNumberInput
-              control={method.control} // Pass control from useForm
-              name="salesTaxPercentage" // Unique name for this input field
-              label="Enter Amount" // Label for the input field
-              required={true} // Field is required
-              errorMessage="Amount is required!" // Custom error message
-              rules={{ required: true }} // React Hook Form validation rules
-              placeholder="Enter a number" // Placeholder for the input
-              isEnable={true} // Input enabled
-              autoFocus={false} // Disable autoFocus if needed
+              id={"salesTaxPercentage"}
+              control={method.control}
+              required
             />
           </FormColumn>
           <FormColumn md="6" lg="3" xl="3">

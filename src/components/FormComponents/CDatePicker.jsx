@@ -29,6 +29,7 @@ const CDatePicker = ({
             <>
               <label htmlFor={field.name} className={`custom-label `}>
                 {label}
+                {required && <span className="text-red-700 fw-bold ">*</span>}
               </label>
               <Calendar
                 {...field}

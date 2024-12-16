@@ -18,3 +18,15 @@
     background-color: var(--table-header-background) !important;
     color: var(--table-header-color) !important;
 }
+.p-datatable .p-datatable-tbody > tr > td{
+    padding: 0.2rem ;
+}
+.p-autocomplete-input{
+    padding: 0.3rem !important;
+}
+.p-autocomplete-dropdown{
+    padding: 0.3rem !important;
+}
+.p-inputtext{
+    padding: 0.3rem !important;
+}

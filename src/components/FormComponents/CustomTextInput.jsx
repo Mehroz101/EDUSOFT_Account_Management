@@ -17,7 +17,7 @@ const CustomTextInput = ({
   ...props
 }) => {
   return (
-    <div className="custom-input-container">
+    <div className="custom-input-container  ">
       <Controller
         name={name}
         control={control}
@@ -27,6 +27,7 @@ const CustomTextInput = ({
           <>
             <label htmlFor={field.name} className={`custom-label `}>
               {label}
+              {required && <span className="text-red-700 fw-bold ">*</span>}
             </label>
             <InputText
               {...field}

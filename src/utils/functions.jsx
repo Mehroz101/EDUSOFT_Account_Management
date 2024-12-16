@@ -12,3 +12,32 @@ export function formatDateToISO(date) {
   // Construct the formatted date string
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
+export function convertBase64StringToFile(imageString, withBase64 = false) {
+  let base64Image = "";
+  if (!withBase64) {
+    base64Image = "data:image/png;base64," + imageString;
+  } else {
+    base64Image = imageString;
+  }
+  const byteString = atob(base64Image.split(",")[1]);
+  const bytes = new ArrayBuffer(byteString.length);
+  const byteArray = new Uint8Array(bytes);
+  for (let i = 0; i < byteString.length; i++) {
+    byteArray[i] = byteString.charCodeAt(i);
+  }
+
+  const blob = new Blob([bytes], { type: "image/png" });
+  const fileName = "image.png";
+  const file = new File([blob], fileName, { type: "image/png" });
+  return file;
+}
+
+export const downloadFile = (file, fileName = null) => {
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", fileName ?? file.name);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};

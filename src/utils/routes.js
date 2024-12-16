@@ -8,4 +8,8 @@ export const ROUTES = {
     PAGE: "/businessunit",
     INSERTORUPDATE: "/businessunit/insertorupdate",
   },
+  CUSTOMERINVOICE: {
+    PAGE: "/customerinvoice",
+    INSERTORUPDATE: "/customerinvoice/insertorupdate",
+  },
 };
