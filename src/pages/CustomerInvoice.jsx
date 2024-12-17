@@ -1,14 +1,15 @@
 import { Button } from "primereact/button";
 import React, { useEffect, useState } from "react";
 import { ROUTES } from "../utils/routes";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import {
   CustomerInvoiceData,
-  CustomerInvoiceInsertUpdate,
+  DeleteCustomerInvoices,
+  PrintCustomerInvoices,
 } from "../Services/CustomerInvoiceApi";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEye,
@@ -16,56 +17,21 @@ import {
   faPrint,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-const invoiceData = [
-  {
-    customerInvoiceID: 1,
-    voucherDate: "2024-12-01",
-    customerName: "John Doe",
-    businessUnitID: 101,
-    totalAmount: 5000,
-    totalTaxAmount: 500,
-    totalNetAmount: 4500,
-    financialSession: "2024-25",
-    taxInvoiceNo: 1001,
-    description: "Invoice for services rendered in December",
-    readOnly: 0,
-    detail: "Paid via credit card",
-  },
-  {
-    customerInvoiceID: 2,
-    voucherDate: "2024-12-02",
-    customerName: "Jane Smith",
-    businessUnitID: 102,
-    totalAmount: 7500,
-    totalTaxAmount: 750,
-    totalNetAmount: 6750,
-    financialSession: "2024-25",
-    taxInvoiceNo: 1002,
-    description: "Invoice for subscription renewal",
-    readOnly: 1,
-    detail: "Pending confirmation",
-  },
-  {
-    customerInvoiceID: 3,
-    voucherDate: "2024-12-03",
-    customerName: "Alan Walker",
-    businessUnitID: 103,
-    totalAmount: 3000,
-    totalTaxAmount: 300,
-    totalNetAmount: 2700,
-    financialSession: "2024-25",
-    taxInvoiceNo: 1003,
-    description: "Invoice for product purchase",
-    readOnly: 0,
-    detail: "Shipped on 2024-12-04",
-  },
-];
+import { notify } from "../utils/Notification";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { FilterMatchMode } from "primereact/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const CustomerInvoice = () => {
   const navigate = useNavigate();
   document.title = "Customer Invoice";
   const [mergedData, setMergedData] = useState([]);
-
+  const [filters, setFilters] = useState({
+    TaxInvoiceNo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    BusinessUnitTitle: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    CustomerName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  });
+  const [btndisable, setBtndisable] = useState(false);
   //=========================== UseQuery Function===============================
   const {
     data: customerInvoiceData,
@@ -94,11 +60,45 @@ const CustomerInvoice = () => {
           detail: invoiceDetail, // Attach the related detail to the invoice
         };
       });
-      console.log(mergedData);
       setMergedData(mergedData); // Update state with merged data
     }
   }, [customerInvoiceData]);
 
+  const DeletecustomerInvoices = useMutation({
+    mutationFn: DeleteCustomerInvoices,
+
+    onSuccess: (data) => {
+      if (data.success) {
+        notify("success", "Customer Invoice Deleted Successfully");
+        refetchCustomerInvoices();
+      } else {
+        notify("error", data.message);
+      }
+    },
+    onError: (error) => {
+      notify("error", error.message);
+    },
+  });
+  const printMutation = useMutation({
+    mutationFn: PrintCustomerInvoices,
+
+    onSuccess: (data) => {
+      if (data.success) {
+        setBtndisable(false);
+        console.log(`${API_URL}/files${data.FilePath}`);
+        window.open(`${API_URL}/files/${data.FilePath}`, "_blank");
+      } else {
+        setBtndisable(false);
+
+        notify("error", data.message);
+      }
+    },
+    onError: (error) => {
+      setBtndisable(false);
+
+      notify("error", error.message);
+    },
+  });
   const ActionTemplate = (rowData) => (
     <>
       <div className="flex gap-2">
@@ -115,33 +115,54 @@ const CustomerInvoice = () => {
           icon={<FontAwesomeIcon icon={faPencil} />}
           className="p-button-outlined p-button-info"
           onClick={() => {
+            if (rowData.ReadOnly === true) {
+              return notify("error", "Invoice is Read Only");
+            }
             navigate(
               `${ROUTES.CUSTOMERINVOICE.INSERTORUPDATE}/${rowData.CustomerInvoiceID}/Edit`
             );
           }}
         />
-        {/* <Button
+        <Button
           icon={<FontAwesomeIcon icon={faTrash} />}
           className="p-button-outlined p-button-danger"
           onClick={() => {
-            navigate(
-              `${ROUTES.CUSTOMERINVOICE.EDIT}/${rowData.customerInvoiceID}`
-            );
+            confirmDelete(rowData.CustomerInvoiceID);
           }}
-        /> */}
+        />
         <Button
           icon={<FontAwesomeIcon icon={faPrint} />}
           className="p-button-outlined p-button-warning"
+          disabled={btndisable}
           onClick={() => {
-            // navigate(
-            //   `${ROUTES.CUSTOMERINVOICE.EDIT}/${rowData.customerInvoiceID}`
-            // );
+            setBtndisable(true);
+            printMutation.mutate(rowData.CustomerInvoiceID);
           }}
         />
       </div>
     </>
   );
 
+  const accept = (data) => {
+    DeletecustomerInvoices.mutate(data);
+    refetchCustomerInvoices();
+  };
+
+  const reject = () => {};
+
+  const confirmDelete = (data) => {
+    confirmDialog({
+      message: "Do you want to delete this record?",
+      header: "Delete Confirmation",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+      accept() {
+        accept(data);
+      },
+      reject,
+    });
+  };
   return (
     <>
       <div className="page_top flex justify-content-between align-items-center">
@@ -168,6 +189,8 @@ const CustomerInvoice = () => {
           stripedRows
           emptyMessage="No customer invoices found."
           loading={isLoading}
+          filters={filters}
+          filterDisplay="row"
         >
           <Column
             header="#"
@@ -180,8 +203,10 @@ const CustomerInvoice = () => {
             style={{ width: "6rem" }}
           />
           <Column
-            field="CustomerInvoiceID"
-            header="Invoice ID"
+            field="TaxInvoiceNo"
+            header="Tax Invoice No"
+            filter
+            filterPlaceholder="Search by no"
             style={{ minWidth: "10rem" }}
           />
           <Column
@@ -191,12 +216,16 @@ const CustomerInvoice = () => {
           />
           <Column
             field="CustomerName"
+            filter
+            filterPlaceholder="Search by name"
             header="Customer Name"
             style={{ minWidth: "12rem" }}
           />
           <Column
-            field="BusinessUnitID"
-            header="Business Unit ID"
+            field="BusinessUnitTitle"
+            filter
+            filterPlaceholder="Search by title"
+            header="Business Unit Title"
             style={{ minWidth: "10rem" }}
           />
           <Column
@@ -214,7 +243,13 @@ const CustomerInvoice = () => {
             header="Total Net Amount"
             style={{ minWidth: "10rem" }}
           />
+          <Column
+            field="ReadOnly"
+            header="ReadOnly"
+            style={{ minWidth: "10rem" }}
+          />
         </DataTable>
+        <ConfirmDialog />
       </div>
     </>
   );

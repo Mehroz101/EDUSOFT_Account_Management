@@ -12,4 +12,22 @@ export const ROUTES = {
     PAGE: "/customerinvoice",
     INSERTORUPDATE: "/customerinvoice/insertorupdate",
   },
+  MONTHCLOSING: {
+    PAGE: "/monthclosing",
+  },
+  TAXEDINVOICE: {
+    PAGE: "/taxedinvoice",
+  },
+  TAXEDINVOICEREPORT: {
+    PAGE: "/taxinvoicereport",
+  },
+  BUSINESSUNITWISETAXREPORT: {
+    PAGE: "/businessunitwisetaxreport",
+  },
+  CUSTOMERINFORMATIONREPORT: {
+    PAGE: "/customerinformationreport",
+  },
+  CUSTOMERWISETAXSUMMARYREPORT: {
+    PAGE: "/customerwisetaxsummaryreport",
+  },
 };

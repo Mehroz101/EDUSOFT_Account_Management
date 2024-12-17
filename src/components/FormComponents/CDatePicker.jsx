@@ -11,7 +11,7 @@ const CDatePicker = ({
   label = "",
   isEnable = true,
   type = "date",
-  placeHolder = "",
+  placeholder = "",
   errorMessage = "This field is required!",
   showErrorMessage = true,
   autoFocus = false,
@@ -37,7 +37,7 @@ const CDatePicker = ({
                 name={field.name}
                 value={field.value}
                 onChange={(e) => field.onChange(e.value)}
-                placeholder={placeHolder}
+                placeholder={placeholder}
                 disabled={!isEnable}
                 autoFocus={autoFocus}
                 {...props}

@@ -30,3 +30,10 @@
 .p-inputtext{
     padding: 0.3rem !important;
 }
+.p-autocomplete-dropdown {
+background-color:#640D5F !important;
+border: none;
+}
+.custom-input-container{
+    margin-bottom: 0 !important;
+}

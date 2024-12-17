@@ -14,6 +14,12 @@ import {
   Setting,
   Signup,
   Users,
+  MonthClosing,
+  TaxedInvoice,
+  TaxedInvoiceReport,
+  BusinessUnitWiseTaxReport,
+  CustomerInformationReport,
+  CustomerWiseTaxSummaryReport,
 } from "./utils/LazyLoadComponent";
 import { Suspense } from "react";
 import { ROUTES } from "./utils/routes";
@@ -94,6 +100,30 @@ function AppRoutes() {
         <Route
           path={`${ROUTES.CUSTOMERINVOICE.INSERTORUPDATE}/:id/:mode`}
           element={<CustomerInvoiceInsertAndUpdate />}
+        />
+        <Route
+          path={`${ROUTES.MONTHCLOSING.PAGE}`}
+          element={<MonthClosing />}
+        />
+        <Route
+          path={`${ROUTES.TAXEDINVOICE.PAGE}`}
+          element={<TaxedInvoice />}
+        />
+        <Route
+          path={`${ROUTES.TAXEDINVOICEREPORT.PAGE}`}
+          element={<TaxedInvoiceReport />}
+        />
+        <Route
+          path={`${ROUTES.BUSINESSUNITWISETAXREPORT.PAGE}`}
+          element={<BusinessUnitWiseTaxReport />}
+        />
+        <Route
+          path={`${ROUTES.CUSTOMERINFORMATIONREPORT.PAGE}`}
+          element={<CustomerInformationReport />}
+        />
+        <Route
+          path={`${ROUTES.CUSTOMERWISETAXSUMMARYREPORT.PAGE}`}
+          element={<CustomerWiseTaxSummaryReport />}
         />
         <Route path={ROUTES.SETTING} element={<Setting />} />
       </Route>

@@ -46,7 +46,7 @@ const Login = () => {
                 <CustomTextInput
                   name="userName"
                   label="UserName"
-                  placeHolder="Enter your email"
+                  placeholder="Enter your email"
                   control={method.control}
                   rules={{ required: "Email is required" }}
                 />
@@ -57,7 +57,7 @@ const Login = () => {
                   name="password"
                   label="Password"
                   type="password"
-                  placeHolder="Enter your password"
+                  placeholder="Enter your password"
                   control={method.control}
                   rules={{ required: "Password is required" }}
                 />

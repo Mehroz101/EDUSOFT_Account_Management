@@ -10,7 +10,7 @@ const CustomTextInput = ({
   label = "",
   isEnable = true,
   type = "text",
-  placeHolder = "",
+  placeholder = "",
   errorMessage = "This field is required!",
   showErrorMessage = true,
   autoFocus = false,
@@ -33,10 +33,9 @@ const CustomTextInput = ({
               {...field}
               id={field.name}
               type={type}
-              placeholder={placeHolder}
+              placeholder={placeholder}
               autoFocus={autoFocus}
               disabled={!isEnable}
-              placeHolder={placeHolder}
               className={`custom-input ${error ? "input-error" : ""}`}
             />
 

@@ -12,6 +12,35 @@ export function formatDateToISO(date) {
   // Construct the formatted date string
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
+export function formatDateToCustom(dateInput) {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const date = new Date(dateInput);
+
+  if (isNaN(date)) {
+    throw new Error("Invalid date input");
+  }
+
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${day}-${month}-${year}`;
+}
+
 export function convertBase64StringToFile(imageString, withBase64 = false) {
   let base64Image = "";
   if (!withBase64) {

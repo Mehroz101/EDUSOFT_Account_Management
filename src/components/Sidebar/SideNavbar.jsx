@@ -11,9 +11,15 @@ import ImgLogo from "../../assets/logo.png";
 import {
   faArrowRightFromBracket,
   faBuilding,
+  faCalendarXmark,
+  faCreditCard,
+  faFileInvoice,
   faGear,
+  faMoneyBill,
   faReceipt,
+  faSquarePollVertical,
   faUsers,
+  faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
 
 const CustomSidebar = ({ visible, onHide }) => {
@@ -62,6 +68,66 @@ const CustomSidebar = ({ visible, onHide }) => {
             >
               <FontAwesomeIcon icon={faReceipt} className="mr-2" /> Customer
               Invoice
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={ROUTES.MONTHCLOSING.PAGE}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faCalendarXmark} className="mr-2" /> Month
+              Closing
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={ROUTES.TAXEDINVOICE.PAGE}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faCreditCard} className="mr-2" />
+              Taxed Invoice
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={ROUTES.TAXEDINVOICEREPORT.PAGE}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faSquarePollVertical} className="mr-2" />
+              Taxed Invoice Report
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={ROUTES.BUSINESSUNITWISETAXREPORT.PAGE}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faBuilding} className="mr-2" />
+              Business Unit Report
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={ROUTES.CUSTOMERINFORMATIONREPORT.PAGE}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faFileInvoice} className="mr-2" />
+              Customer Info Report
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={ROUTES.CUSTOMERWISETAXSUMMARYREPORT.PAGE}
+              className="sidebar-link "
+              onClick={handleLinkClick}
+            >
+              <FontAwesomeIcon icon={faUserTie} className="mr-2" />
+              Customer Wise Report
             </Link>
           </li>
           <li>

@@ -64,12 +64,13 @@ const Setting = () => {
     <div>
       <h1>Setting</h1>
       <form onSubmit={method.handleSubmit(handleSubmit)}>
-        <FormRow className="form-row flex justify-content-center ">
+        <FormRow className="form-row flex justify-content-center align-items-end ">
           <FormColumn md="6" lg="3" xl="3">
             <CDatePicker
               control={method.control}
               name="financialSessionDateFrom"
               label="Date From"
+              dateFormat="dd-M-yy"
               rules={{ required: "Date is required" }}
               required
               style={{ maxWidth: "400px" }}
@@ -80,6 +81,7 @@ const Setting = () => {
               control={method.control}
               name="financialSessionDateTo"
               label="Date To"
+              dateFormat="dd-M-yy"
               rules={{ required: "Date is required" }}
               required
               style={{ maxWidth: "400px" }}

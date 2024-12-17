@@ -7,15 +7,12 @@ export const CustomerInvoiceInsertUpdate = async (data) => {
       `${API_URL}/api/CustomerInvoices/CustomerInvoiceInsertUpdate`,
       data
     );
-    console.log(response);
-    if (response.data.success) {
-      return response.data.data || [];
-    }
+    return response.data || [];
   } catch (error) {
     console.log(error);
   }
 };
-export const CustomerInvoiceData = async (masterID = 1) => {
+export const CustomerInvoiceData = async (masterID = 0) => {
   try {
     const response = await axios.post(
       `${API_URL}/api/CustomerInvoices/GetCustomerInvoices`,
@@ -23,7 +20,6 @@ export const CustomerInvoiceData = async (masterID = 1) => {
         masterID: masterID,
       }
     );
-    console.log(response.data);
     if (response.data.success) {
       return response.data || [];
     }
@@ -36,7 +32,6 @@ export const FinancialSessionDropdown = async () => {
     const response = await axios.post(
       `${API_URL}/api/Dropdown/FinancialSessionDropdown`
     );
-    console.log(response.data.data);
     if (response.data.success) {
       return response.data.data || [];
     }
@@ -49,7 +44,7 @@ export const BusinessUnitDropdown = async () => {
     const response = await axios.post(
       `${API_URL}/api/Dropdown/BusinessUnitDropdown`
     );
-    console.log(response.data.data);
+
     if (response.data.success) {
       return response.data.data || [];
     }
@@ -59,10 +54,13 @@ export const BusinessUnitDropdown = async () => {
 };
 export const GetInvoiceNo = async ({ id }) => {
   try {
+    console.log("called");
+    if (!id) {
+      return;
+    }
     const response = await axios.post(
       `${API_URL}/api/CustomerInvoices/GetInvoiceNo?BusinessUnitID=${id}`
     );
-    console.log(response.data.TaxInvoiceNo);
     if (response.data.success) {
       return response.data.TaxInvoiceNo || [];
     }
@@ -72,11 +70,9 @@ export const GetInvoiceNo = async ({ id }) => {
 };
 export const CustomersDropdown = async () => {
   try {
-    console.log("called customers dropdown");
     const response = await axios.post(
       `${API_URL}/api/Dropdown/CustomersDropdown`
     );
-    console.log(response.data.data);
     if (response.data.success) {
       return response.data.data || [];
     }
@@ -89,8 +85,6 @@ export const ProductsDropdown = async () => {
     const response = await axios.post(
       `${API_URL}/api/Dropdown/ProductsDropdown`
     );
-    console.log("called products dropdown");
-    console.log(response.data.data);
     if (response.data.success) {
       return response.data.data || [];
     }
@@ -103,8 +97,6 @@ export const ServicesDropdown = async () => {
     const response = await axios.post(
       `${API_URL}/api/Dropdown/ServicesDropdown`
     );
-    console.log("called services dropdown");
-    console.log(response.data.data);
     if (response.data.success) {
       return response.data.data || [];
     }
@@ -120,12 +112,56 @@ export const CustomerInvoices = async ({ masterID = 0 }) => {
         masterID: masterID,
       }
     );
-    console.log("called customer invoices");
-    console.log(response.data.data);
     if (response.data.success) {
       return response.data.data || [];
     }
   } catch (error) {
     console.log(error);
+  }
+};
+export const GetCustomerInfo = async (customerName) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/CustomerInvoices/GetCustomerInfo?CustomerName=${customerName}`
+    );
+    if (response.data.success) {
+      return response.data.CustomerInfo || "";
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const DeleteCustomerInvoices = async (masterID = 0) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/CustomerInvoices/DeleteCustomerInvoices`,
+      {
+        masterID: masterID,
+      }
+    );
+    if (response.data) {
+      return response.data || "";
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const PrintCustomerInvoices = async (customerInvoiceIDs) => {
+  console.log("PrintCustomerInvoices called with IDs", customerInvoiceIDs);
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/Print/CustomerInvoicePrint`,
+      {
+        customerInvoiceIDs: `${customerInvoiceIDs}`,
+      }
+    );
+    console.log(response.data);
+    if (response.data) {
+      return response.data || "";
+    }
+  } catch (error) {
+    console.log("PrintCustomerInvoices error", error.message);
   }
 };

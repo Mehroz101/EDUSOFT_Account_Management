@@ -21,6 +21,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { AutoComplete } from "primereact/autocomplete";
 import { classNames } from "primereact/utils";
+import CAutoComplete from "../../components/FormComponents/CAutoComplete";
+import { notify } from "../../utils/Notification";
 
 const CustomerInvoiceRowEntryFields = ({ mode }) => {
   const method = useFormContext();
@@ -32,24 +34,8 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
     name: "detail",
   });
 
-  const methods = useForm({
-    defaultValues: {
-      Product: "",
-      Service: "",
-      Qty: 1,
-      Rate: 0,
-      Amount: 0,
-      TaxPercentage: 0,
-      TaxAmount: 0,
-      NetAmount: 0,
-      Description: "",
-    },
-  });
   //===========================UseQuery Function===============================
-  // const { data: Customerdropdown } = useQuery({
-  //   queryKey: ["Customerdropdown"],
-  //   queryFn: CustomersDropdown,
-  // });
+
   const { data: Productdropdown } = useQuery({
     queryKey: ["Productdropdown"],
     queryFn: ProductsDropdown,
@@ -60,125 +46,70 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
   });
   useEffect(() => {
     if (Productdropdown) {
-      console.log("Productdropdown");
-      console.log(Productdropdown[0].label);
       const sessions = Productdropdown.map((item) => item.label);
       setProductItems(sessions);
-      methods.setValue("Product", Productdropdown[0].label);
     }
   }, [Productdropdown]);
   useEffect(() => {
     if (Servicesdropdown) {
-      console.log("Servicesdropdown");
-      console.log(Servicesdropdown[0].label);
       const sessions = Servicesdropdown.map((item) => item.label);
       setServiceItems(sessions);
-      methods.setValue("Service", Servicesdropdown[0].label);
     }
   }, [Servicesdropdown]);
-  const Productsearch = (event) => {
-    let query = event.query.toLowerCase();
-    let _filteredItems = Productitems.filter((item) =>
-      item.toLowerCase().includes(query)
-    );
-    setProductItems(_filteredItems); // Set filtered suggestions
-  };
-  const Servicesearch = (event) => {
-    let query = event.query.toLowerCase();
-    let _filteredItems = Serviceitems.filter((item) =>
-      item.toLowerCase().includes(query)
-    );
-    setServiceItems(_filteredItems); // Set filtered suggestions
-  };
 
   //===========================onplusclick Function===============================
   const onPlusClick = () => {
-    const currentValues = methods.getValues();
-    if (!currentValues.Product || !currentValues.Service) {
-      return;
-    }
-    if (currentValues.Qty <= 0) {
-      return;
-    }
-    append({
-      Product: currentValues.Product,
-      Service: currentValues.Service,
-      Qty: currentValues.Qty || 1,
-      Rate: currentValues.Rate || 0,
-      Amount: currentValues.Amount || 0,
-      TaxPercentage: currentValues.TaxPercentage || 0,
-      TaxAmount: currentValues.TaxAmount || 0,
-      NetAmount: currentValues.NetAmount || 0,
-      Description: currentValues.Description || "",
-    });
-  };
-  const calculateTotals = () => {
-    const totalAmount = fields.reduce(
-      (sum, item) => sum + (item.Amount || 0),
-      0
-    );
-    methods.setValue("totalAmount", totalAmount);
-    const totalTaxAmount = fields.reduce(
-      (sum, item) => sum + (item.TaxAmount || 0),
-      0
-    );
-    methods.setValue("totalTaxAmount", totalTaxAmount);
-    const totalNetAmount = fields.reduce(
-      (sum, item) => sum + (item.NetAmount || 0),
-      0
-    );
-    methods.setValue("totalNetAmount", totalNetAmount);
-    return { totalAmount, totalTaxAmount, totalNetAmount };
-  };
+    try {
+      if (
+        !method.getValues("Product_Header") ||
+        !method.getValues("Service_Header")
+      ) {
+        notify("error", "Please select product and service");
+        return;
+      }
+      if (method.getValues("Qty_Header") <= 0) {
+        notify("error", "Qty should be greater than 0");
+        return;
+      }
+      append({
+        Product: method.getValues("Product_Header"),
+        Service: method.getValues("Service_Header"),
+        Qty: method.getValues("Qty_Header"),
+        Rate: method.getValues("Rate_Header"),
+        Amount: method.getValues("Amount_Header"),
+        TaxPercentage: method.getValues("TaxPercentage_Header"),
+        TaxAmount: method.getValues("TaxAmount_Header"),
+        NetAmount: method.getValues("NetAmount_Header"),
+        Description: method.getValues(""),
+      });
+      method.setValue("Product_Header", "");
+      method.setValue("Service_Header", "");
+      method.setValue("Qty_Header", 1);
+      method.setValue("Rate_Header", 0);
+      method.setValue("Amount_Header", 0);
+      method.setValue("TaxPercentage_Header", 0);
+      method.setValue("TaxAmount_Header", 0);
+      method.setValue("NetAmount_Header", 0);
 
-  const { totalAmount, totalTaxAmount, totalNetAmount } = calculateTotals();
+      method.setValue("Description_Header", "");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
-      <form onSubmit={methods.handleSubmit(onPlusClick)}>
+      {!mode || mode === "Edit" ? (
+        // <form>
         <FormRow>
           <FormColumn sm={12} md={4} lg={4} xl={3}>
             <label className="text-md font-semibold">
               Product Name <span className="text-red-700 fw-bold ">*</span>
             </label>
-            <Controller
-              name="Product"
-              control={methods.control}
-              rules={{ required: true }}
-              render={({ field, fieldState }) => (
-                <>
-                  <AutoComplete
-                    inputId={field.name}
-                    value={field.value}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    suggestions={Productitems}
-                    completeMethod={Productsearch}
-                    disabled={mode && mode !== "Edit"}
-                    dropdown
-                    style={{ width: "100%" }}
-                    pt={{
-                      dropdownButton: {
-                        root: {
-                          style: {
-                            padding: "0 !important",
-                          },
-                        },
-                        icon: {
-                          style: {
-                            padding: "0",
-                          },
-                        },
-                      },
-                      input: {
-                        style: {
-                          width: "100%",
-                        },
-                      },
-                    }}
-                    className={classNames({ "p-invalid": fieldState.error })}
-                  />
-                </>
-              )}
+            <CAutoComplete
+              name="Product_Header"
+              control={method.control}
+              suggestions={Productitems || []}
+              disabled={mode && mode !== "Edit"}
             />
           </FormColumn>
 
@@ -186,45 +117,11 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
             <label className="text-md font-semibold">
               Service Name <span className="text-red-700 fw-bold ">*</span>
             </label>
-            <Controller
-              name="Service"
-              control={methods.control}
-              rules={{ required: true }}
-              render={({ field, fieldState }) => (
-                <>
-                  <AutoComplete
-                    inputId={field.name}
-                    value={field.value}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    suggestions={Serviceitems}
-                    completeMethod={Servicesearch}
-                    disabled={mode && mode !== "Edit"}
-                    dropdown
-                    style={{ width: "100%" }}
-                    pt={{
-                      dropdownButton: {
-                        root: {
-                          style: {
-                            padding: "0 !important",
-                          },
-                        },
-                        icon: {
-                          style: {
-                            padding: "0",
-                          },
-                        },
-                      },
-                      input: {
-                        style: {
-                          width: "100%",
-                        },
-                      },
-                    }}
-                    className={classNames({ "p-invalid": fieldState.error })}
-                  />
-                </>
-              )}
+            <CAutoComplete
+              name="Service_Header"
+              control={method.control}
+              suggestions={Serviceitems || []}
+              disabled={mode && mode !== "Edit"}
             />
           </FormColumn>
 
@@ -233,18 +130,16 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
               Qty <span className="text-red-700 fw-bold ">*</span>
             </label>
             <CNumberInput
-              id={"Qty"}
-              control={methods.control}
-              required
+              id={"Qty_Header"}
+              control={method.control}
               disabled={mode && mode !== "Edit"}
               onChange={(e) => {
-                const rate = parseFloat(methods.getValues("Rate")) || 0; // Ensure it's a number
+                const rate = parseFloat(method.getValues("Rate_Header")) || 0; // Ensure it's a number
                 const qty = e.value || 0; // Ensure it's a number
                 const amount = qty * rate;
-                methods.setValue("Amount", amount);
-                const taxAmount =
-                  parseFloat(methods.getValues("TaxAmount")) || 0; // Ensure it's a number
-                methods.setValue("NetAmount", amount + taxAmount);
+                method.setValue("Amount_Header", amount);
+
+                method.setValue("NetAmount_Header", amount);
               }}
             />
           </FormColumn>
@@ -254,18 +149,17 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
               Rate <span className="text-red-700 fw-bold ">*</span>
             </label>
             <CNumberInput
-              id={"Rate"}
+              id={"Rate_Header"}
               disabled={mode && mode !== "Edit"}
               onChange={(e) => {
-                const qty = parseFloat(methods.getValues("Qty")) || 0; // Ensure it's a number
+                debugger;
+                const qty = parseFloat(method.getValues("Qty_Header")) || 0; // Ensure it's a number
                 const rate = e.value || 0; // Ensure it's a number
                 const amount = rate * qty;
-                methods.setValue("Amount", amount);
-                const taxAmount =
-                  parseFloat(methods.getValues("TaxAmount")) || 0; // Ensure it's a number
-                methods.setValue("NetAmount", amount + taxAmount);
+                method.setValue("Amount_Header", amount);
+                method.setValue("NetAmount_Header", amount);
               }}
-              control={methods.control}
+              control={method.control}
               mode="decimal"
               maxFractionDigits={2}
             />
@@ -276,8 +170,8 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
               Amount <span className="text-red-700 fw-bold ">*</span>
             </label>
             <CNumberInput
-              id={"Amount"}
-              control={methods.control}
+              id={"Amount_Header"}
+              control={method.control}
               mode="decimal"
               maxFractionDigits={2}
               inputClassName="form-control"
@@ -291,8 +185,8 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
               TaxPercentage <span className="text-red-700 fw-bold ">*</span>
             </label>
             <CNumberInput
-              id={"TaxPercentage"}
-              control={methods.control}
+              id={"TaxPercentage_Header"}
+              control={method.control}
               mode="decimal"
               maxFractionDigits={2}
               inputClassName="form-control"
@@ -306,8 +200,8 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
               TaxAmount <span className="text-red-700 fw-bold ">*</span>
             </label>
             <CNumberInput
-              id={"TaxAmount"}
-              control={methods.control}
+              id={"TaxAmount_Header"}
+              control={method.control}
               mode="decimal"
               maxFractionDigits={2}
               inputClassName="form-control"
@@ -321,8 +215,8 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
               NetAmount <span className="text-red-700 fw-bold ">*</span>
             </label>
             <CNumberInput
-              id={"NetAmount"}
-              control={methods.control}
+              id={"NetAmount_Header"}
+              control={method.control}
               mode="decimal"
               maxFractionDigits={2}
               inputClassName="form-control"
@@ -333,10 +227,10 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
 
           <FormColumn sm={12} md={4} lg={4} xl={4}>
             <CustomTextInput
-              name="Description"
+              name="Description_Header"
               label="Description"
               isEnable={mode && mode === "Edit"}
-              control={methods.control}
+              control={method.control}
               required={false}
             />
           </FormColumn>
@@ -345,66 +239,24 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
             <Button
               type="button"
               label="Add"
-              color="primary"
+              style={{ backgroundColor: "#640D5F", border: "none" }}
               onClick={onPlusClick}
-              disabled={mode === "Edit" ? false : true}
+              disabled={mode && mode !== "Edit"}
             />
           </FormColumn>
         </FormRow>
-      </form>
+      ) : // </form>
+      null}
+
       <div className="table w-full mt-4">
         <CustomerInvoiceTable
           fields={fields}
-          method={methods}
-          append={append}
+          method={method}
           remove={remove}
           mode={mode} // Add this line
+          Productitems={Productitems}
+          Serviceitems={Serviceitems}
         />
-      </div>
-
-      <div className="totalAmounts mt-8 p-4 bg-white shadow-md rounded-lg">
-        <div className="flex justify-content-center gap-4 space-x-6">
-          <div
-            className=" box flex flex-col"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <p className="text-lg font-semibold text-gray-700">Total Amount</p>
-            <p className="text-lg font-semibold bg-gray-200 p-2 rounded-lg text-gray-800">
-              {totalAmount}
-            </p>
-          </div>
-          <div
-            className="box flex flex-col items-end"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <p className="text-lg font-semibold text-gray-700">
-              Total Tax Amount
-            </p>
-            <p className="text-lg font-semibold bg-gray-200 p-2 rounded-lg text-gray-800">
-              {totalTaxAmount}
-            </p>
-          </div>
-          <div
-            className=" boxflex flex-col items-end"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <p className="text-lg font-semibold text-gray-700">
-              Total Net Amount
-            </p>
-            <p className="text-lg font-semibold bg-gray-200 p-2 rounded-lg text-gray-800">
-              {totalNetAmount}
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -413,7 +265,14 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
 export default CustomerInvoiceRowEntryFields;
 
 // CustomerInvoiceTable Component
-const CustomerInvoiceTable = ({ fields, method, append, remove, mode }) => {
+const CustomerInvoiceTable = ({
+  fields,
+  method,
+  remove,
+  mode,
+  Productitems,
+  Serviceitems,
+}) => {
   return (
     <>
       <table className="w-full">
@@ -423,10 +282,10 @@ const CustomerInvoiceTable = ({ fields, method, append, remove, mode }) => {
             <th className="p-2 border border-gray-300">Service</th>
             <th className="p-2 border border-gray-300">Qty</th>
             <th className="p-2 border border-gray-300">Rate</th>
-            <th className="p-2 border border-gray-300">Net Amount</th>
+            <th className="p-2 border border-gray-300">Amount</th>
             <th className="p-2 border border-gray-300">Tax Percentage</th>
             <th className="p-2 border border-gray-300">Tax Amount</th>
-            <th className="p-2 border border-gray-300">Amount</th>
+            <th className="p-2 border border-gray-300">Net Amount</th>
             <th className="p-2 border border-gray-300">Description</th>
             <th className="p-2 border border-gray-300">Action</th>
           </tr>
@@ -438,12 +297,13 @@ const CustomerInvoiceTable = ({ fields, method, append, remove, mode }) => {
             fields.map((item, index) => (
               <CustomerInvoiceTableRow
                 key={item.id}
-                control={method.control}
                 method={method}
                 index={index}
                 item={item}
                 remove={remove}
                 mode={mode}
+                Productitems={Productitems}
+                Serviceitems={Serviceitems}
               />
             ))}
         </tbody>
@@ -454,63 +314,49 @@ const CustomerInvoiceTable = ({ fields, method, append, remove, mode }) => {
 
 // CustomerInvoiceTableRow Component
 const CustomerInvoiceTableRow = ({
-  control,
   method,
   index,
   item,
   remove,
   mode,
+  Productitems,
+  Serviceitems,
 }) => {
-  const [amount, setAmount] = useState(0);
-  const [netAmount, setNetAmount] = useState(0);
-  useEffect(() => {
-    console.log(item.Amount);
-    setAmount(item.Amount);
-    setNetAmount(item.NetAmount);
-  }, [item.Amount, item.NetAmount, item.Qty, item.Rate, item.TaxPercentage]);
   return (
     <tr>
       <td>
-        <CustomTextInput
-          control={control}
+        <CAutoComplete
+          control={method.control}
           name={`detail.${index}.Product`}
-          defaultValue={item.Product}
-          isEnable={mode && mode === "Edit"}
+          suggestions={Productitems}
+          disabled={mode && mode !== "Edit"}
         />
       </td>
 
       <td>
-        <CustomTextInput
-          control={control}
+        <CAutoComplete
+          control={method.control}
           name={`detail.${index}.Service`}
-          defaultValue={item.Service}
-          isEnable={mode && mode === "Edit"}
+          suggestions={Serviceitems}
+          disabled={mode && mode !== "Edit"}
         />
       </td>
 
       <td>
         <CNumberInput
           id={`detail.${index}.Qty`}
-          control={control}
-          value={item.Qty}
+          control={method.control}
           disabled={mode && mode !== "Edit"}
           onChange={(e) => {
-            const rate = parseFloat(item.Rate) || 0;
             const qty = e.value || 0;
+            const rate =
+              parseFloat(method.getValues(`detail.${index}.Rate`)) || 0;
             const amount = qty * rate;
-            //  setAmount(amount);
             method.setValue(`detail.${index}.Amount`, amount);
-
-            // Recalculate TaxAmount (if any logic is involved)
-            const taxAmount = parseFloat(item.TaxAmount) || 0;
-            const netAmount = amount + taxAmount;
-            //    setNetAmount(netAmount);
-            method.setValue(`detail.${index}.NetAmount`, netAmount);
-            console.log(
-              "NetAmount:",
-              method.getValues(`detail.${index}.NetAmount`)
-            );
-            console.log("Amount:", method.getValues(`detail.${index}.Amount`));
+            // const taxAmount =
+            //   parseFloat(method.getValues(`detail.${index}.TaxAmount`)) || 0;
+            // const netAmount = amount + taxAmount;
+            method.setValue(`detail.${index}.NetAmount`, amount);
           }}
         />
       </td>
@@ -518,38 +364,27 @@ const CustomerInvoiceTableRow = ({
       <td>
         <CNumberInput
           id={`detail.${index}.Rate`}
-          control={control}
-          value={item.Rate}
+          control={method.control}
           disabled={mode && mode !== "Edit"}
           onChange={(e) => {
             const rate = e.value || 0;
-            const qty = parseFloat(item.Qty) || 0;
-            const amount = rate * qty;
-            setAmount(amount);
+            const qty =
+              parseFloat(method.getValues(`detail.${index}.Qty`)) || 0;
+            const amount = parseFloat(rate * qty);
             method.setValue(`detail.${index}.Amount`, amount);
-
-            // Recalculate NetAmount when Rate is changed
-            const taxAmount = parseFloat(item.taxAmount) || 0;
-            const netAmount = amount + taxAmount;
-            setNetAmount(netAmount);
-            method.setValue(`detail.${index}.NetAmount`, netAmount);
-
-            console.log(
-              "NetAmount:",
-              method.getValues(`detail.${index}.NetAmount`)
-            );
-            console.log("Amount:", method.getValues(`detail.${index}.Amount`));
+            // const taxAmount =
+            //   parseFloat(method.getValues(`detail.${index}.TaxAmount`)) || 0;
+            // const netAmount = amount + taxAmount;
+            method.setValue(`detail.${index}.NetAmount`, amount);
           }}
           mode="decimal"
           maxFractionDigits={2}
         />
       </td>
-
       <td>
         <CNumberInput
-          id={`detail.${index}.NetAmount`}
-          control={control}
-          value={netAmount}
+          id={`detail.${index}.Amount`}
+          control={method.control}
           mode="decimal"
           maxFractionDigits={2}
           disabled
@@ -559,8 +394,7 @@ const CustomerInvoiceTableRow = ({
       <td>
         <CNumberInput
           id={`detail.${index}.TaxPercentage`}
-          control={control}
-          value={item.TaxPercentage}
+          control={method.control}
           mode="decimal"
           maxFractionDigits={2}
           disabled
@@ -570,30 +404,25 @@ const CustomerInvoiceTableRow = ({
       <td>
         <CNumberInput
           id={`detail.${index}.TaxAmount`}
-          control={control}
-          value={item.TaxAmount}
+          control={method.control}
           mode="decimal"
           maxFractionDigits={2}
           disabled
         />
       </td>
-
       <td>
         <CNumberInput
-          id={`detail.${index}.Amount`}
-          control={control}
-          value={amount}
+          id={`detail.${index}.NetAmount`}
+          control={method.control}
           mode="decimal"
           maxFractionDigits={2}
           disabled
         />
       </td>
-
       <td>
         <CustomTextInput
-          control={control}
+          control={method.control}
           name={`detail.${index}.Description`}
-          defaultValue={item.Description}
           isEnable={mode && mode === "Edit"}
         />
       </td>
@@ -603,6 +432,7 @@ const CustomerInvoiceTableRow = ({
           icon={<FontAwesomeIcon icon={faTrash} />}
           className="p-button-outlined p-button-danger"
           onClick={() => remove(index)}
+          disabled={mode && mode !== "Edit"}
         />
       </td>
     </tr>
