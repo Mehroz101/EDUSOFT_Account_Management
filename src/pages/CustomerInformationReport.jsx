@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FilterMatchMode } from "primereact/api";
 import { TaxedInvoiceReportFun } from "../Services/TaxedInvoiceReportApi";
 import { CustomerInformationReportFun } from "../Services/CustomerInformationReport";
+import ViewPdf from "../components/ViewPdf";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const CustomerInformationReport = () => {
@@ -114,7 +115,9 @@ const CustomerInformationReport = () => {
         </div>
         {invoiceReportData && (
           <>
-            <div className="ml-2 mr-2 min-h-screen w-full mt-2">
+            <ViewPdf url={`${API_URL}/files/${invoiceReportData}`} />
+
+            {/* <div className="ml-2 mr-2 min-h-screen w-full mt-2">
               <div style={{ width: "100%", height: "100vh" }}>
                 <iframe
                   src={`${API_URL}/files/${invoiceReportData}`}
@@ -124,7 +127,7 @@ const CustomerInformationReport = () => {
                   title="PDF Viewer"
                 ></iframe>
               </div>
-            </div>
+            </div> */}
           </>
         )}
       </div>

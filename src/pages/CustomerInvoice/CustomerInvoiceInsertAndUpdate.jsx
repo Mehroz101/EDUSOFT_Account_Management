@@ -137,52 +137,52 @@ const NewCustomerInvoice = () => {
     if (customerInvoiceData) {
       method.setValue(
         "CustomerInfo",
-        customerInvoiceData.master[0].CustomerInfo || ""
+        customerInvoiceData.master[0]?.CustomerInfo || ""
       );
       method.setValue(
         "customerInvoiceID",
-        customerInvoiceData.master[0].CustomerInvoiceID || 0
+        customerInvoiceData.master[0]?.CustomerInvoiceID || 0
       );
       method.setValue(
         "FinancialSession",
-        customerInvoiceData.master[0].FinancialSession || ""
+        customerInvoiceData.master[0]?.FinancialSession || ""
       );
 
       method.setValue(
         "businessUnitID",
-        customerInvoiceData.master[0].BusinessUnitID || ""
+        customerInvoiceData.master[0]?.BusinessUnitID || ""
       );
       method.setValue(
         "TaxInvoiceNo",
-        customerInvoiceData.master[0].TaxInvoiceNo || 0
+        customerInvoiceData.master[0]?.TaxInvoiceNo || 0
       );
       method.setValue(
         "InvoiceDate",
-        new Date(customerInvoiceData.master[0].InvoiceDate) || new Date()
+        new Date(customerInvoiceData.master[0]?.InvoiceDate) || new Date()
       );
       method.setValue(
         "customerName",
-        customerInvoiceData.master[0].CustomerName || ""
+        customerInvoiceData.master[0]?.CustomerName || ""
       );
       method.setValue(
         "description",
-        customerInvoiceData.master[0].Description || ""
+        customerInvoiceData.master[0]?.Description || ""
       );
       method.setValue(
         "totalAmount",
-        customerInvoiceData.master[0].TotalAmount || 0
+        customerInvoiceData.master[0]?.TotalAmount || 0
       );
       method.setValue(
         "totalTaxAmount",
-        customerInvoiceData.master[0].TotalTaxAmount || 0
+        customerInvoiceData.master[0]?.TotalTaxAmount || 0
       );
       method.setValue(
         "totalNetAmount",
-        customerInvoiceData.master[0].TotalNetAmount || 0
+        customerInvoiceData.master[0]?.TotalNetAmount || 0
       );
       method.setValue(
         "readOnly",
-        customerInvoiceData.master[0].ReadOnly || false
+        customerInvoiceData.master[0]?.ReadOnly || false
       );
 
       method.setValue("detail", customerInvoiceData.detail || []);
@@ -376,7 +376,7 @@ function BusinessUnitDependentField({ mode }) {
   useEffect(() => {
     if (Businessunitdropdown?.length > 0) {
       if (method.getValues("businessUnitID") === "") {
-        method.setValue("businessUnitID", Businessunitdropdown[0].value);
+        method.setValue("businessUnitID", Businessunitdropdown[0]?.value);
       }
       console.log(method.getValues("businessUnitID"));
       if (
@@ -450,7 +450,7 @@ function FinancialSessionDependentField({ mode }) {
       setItems(sessions); // Set transformed data
       method.setValue(
         "FinancialSession",
-        Financialsessiondropdown[0].FinancialSession
+        Financialsessiondropdown[0]?.FinancialSession
       );
     }
   }, [Financialsessiondropdown]);
