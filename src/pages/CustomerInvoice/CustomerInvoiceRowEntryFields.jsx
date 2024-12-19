@@ -152,7 +152,6 @@ const CustomerInvoiceRowEntryFields = ({ mode }) => {
               id={"Rate_Header"}
               disabled={mode && mode !== "Edit"}
               onChange={(e) => {
-                debugger;
                 const qty = parseFloat(method.getValues("Qty_Header")) || 0; // Ensure it's a number
                 const rate = e.value || 0; // Ensure it's a number
                 const amount = rate * qty;
